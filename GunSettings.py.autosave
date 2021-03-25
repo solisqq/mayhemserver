@@ -1,0 +1,10 @@
+from PyQt5.QtWidgets import QWidget, QPushButton
+
+
+class GSettings(QWidget):
+
+    getSettingsBtn = None
+
+    def __init__(self, _parent):
+        super().__init__(_parent)
+        getSettingsBtn = QPushButton

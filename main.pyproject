@@ -1,0 +1,3 @@
+{
+    "files": ["Player.py","configForm.ui","GameMode.py","GPlayerData.py","MainWindow.py","Responses.py","MainWindow.ui","server2.py","VideoLabel.py","QThreading.py","GunSettings.py"]
+}
