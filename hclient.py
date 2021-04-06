@@ -8,6 +8,17 @@ from GPlayerData import GPlayerData
 from GunSettings import GSettings
 
 
+def printLong(buffor):
+    count = 1
+    if(len(buffor) > 1000):
+        count = len(buffor)/1000
+        count = int(count)+1
+    else:
+        print(buffor)
+        return
+    for i in range(0, count):
+        print(buffor[i*1000:(i+1)*1000])
+
 class HClient(QWidget):
     sock = None
     buffor = bytearray()
@@ -33,7 +44,14 @@ class HClient(QWidget):
         print("disconnected")
 
     def respond(self, responseObject):
-        self.sock.write(responseObject.response)
+        if(len(responseObject.response)>0):
+            # print(responseObject.response)
+            self.sock.write(responseObject.response)
+
+    @pyqtSlot(bytearray)
+    def sendData(self, data):
+        # print(data)
+        self.sock.write(data)
 
     @pyqtSlot()
     def handleData(self):
@@ -44,5 +62,6 @@ class HClient(QWidget):
         end = self.buffor[len(self.buffor)-4:len(self.buffor)]
         if end == b"\xff\xfa\n\x01":
             self.requestRdy.emit(self.buffor)
-            print(self.buffor)
+            # printLong(self.buffor)
+            # print(self.buffor)
             self.buffor.clear()

@@ -7,11 +7,12 @@ class Response(QObject):
     cmd = 0
     response = bytearray()
 
-    def __init__(self, cmd, response):
+    def __init__(self, cmd, response=None):
         super().__init__()
         self.cmd = cmd
-        self.response = response
-        self.response.insert(0, cmd)
+        if response is not None:
+            self.response = response
+            self.response.insert(0, cmd)
 
     def handleData(self, data):
         pass
@@ -32,23 +33,18 @@ class Response(QObject):
 
 
 class ImgResponse(Response):
-
-    splitter = bytearray()
     imgReady = pyqtSignal(np.ndarray)
 
     def __init__(self):
         resp = bytearray()
         self.addBytesToByteArray(resp, 7, 0xFF)
         super().__init__(0xFF, resp)
-        self.splitter.append(0xFF)
-        self.splitter.append(0x0B)
-        self.splitter.append(0xFB)
-        self.splitter.append(0x0A)
 
     def handleData(self, data):
         try:
             # imgInBytes = data[11:len(data)]
             decoded = cv2.imdecode(np.frombuffer(data, np.uint8), -1)
+            decoded = cv2.rotate(decoded, cv2.cv2.ROTATE_180)
             self.imgReady.emit(decoded)
             cv2.imwrite("imgs/test.jpg", decoded)
         except Exception:
@@ -74,6 +70,7 @@ class TextResponse(Response):
         super().__init__(2, resp)
 
     def handleData(self, data):
+        print(data[1:len(data)])
         pass
         # print(data[5:len(data)])
 
